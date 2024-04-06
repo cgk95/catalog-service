@@ -12,4 +12,4 @@ spring:
     name: catalog-service
 
 polar:
-  greetings: "안녕하시유~ 올리버 쌤 입니다!!"
+  greetings: "안녕하시유~ '로컬' 올리버 쌤 입니다!!"
