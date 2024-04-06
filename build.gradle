@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.18'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
 }
 
 group = 'com.polarbookshop'
@@ -11,19 +11,30 @@ sourceCompatibility = '17'
 description = 'Provides functionality for managing the books in the catalog.'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+}
+
+configurations { // 프로젝트를 빌드할 때 그래이들이 설정 프로세서를 사용하도록 설정한다.
+    complieOnly { // 프로젝트를 빌드할 때 새로운 속성에 대한 메타데이터가 자동으로 생섣되고 META-INF/spring-configuration-metadata.json 파일에 저장된다.
+        extendsFrom annotationProcessor
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.projectlombok:lombok'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	testImplementation 'io.projectreactor:reactor-test'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'io.projectreactor:reactor-test'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+    systemProperty 'spring.profiles.active', 'testdata'
 }
