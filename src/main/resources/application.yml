@@ -1,5 +1,3 @@
-#spring.application.name=catalog-service
-
 server:
   port: 9091
   tomcat:
@@ -12,3 +10,6 @@ server:
 spring:
   application:
     name: catalog-service
+
+polar:
+  greetings: "안녕하시유~ 올리버 쌤 입니다!!"
