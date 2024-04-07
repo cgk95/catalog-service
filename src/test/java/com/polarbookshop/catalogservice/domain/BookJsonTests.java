@@ -16,7 +16,7 @@ public class BookJsonTests {
     @Test
     @DisplayName("Book 객체를 JSON으로 직렬화하는 테스트")
     void testSerialize() throws Exception {
-        Book book = new Book("1234567890", "Test Book", "author", 9.99);
+        Book book = Book.of("1234567890", "Test Book", "author", 9.99);
         // Serialize book to JSON
         var jsonContent = jacksonTester.write(book);
         assertThat(jsonContent).extractingJsonPathStringValue("@.isbn")
@@ -43,6 +43,6 @@ public class BookJsonTests {
 
         assertThat(jacksonTester.parse(content))
                 .usingRecursiveComparison()
-                .isEqualTo(new Book("1234567890", "Title", "Author", 9.90));
+                .isEqualTo(Book.of("1234567890", "Title", "Author", 9.90));
     }
 }
