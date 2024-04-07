@@ -24,7 +24,7 @@ public class BookValidationTests {
     @Test
     @DisplayName("모두 유효하면 밸리데이션 통과")
     void whenAllFieldsCorrectThenValidationSucceeds() {
-        var book = new Book("1234567890", "Title", "Author", 9.99);
+        var book = Book.of("1234567890", "Title", "Author", 9.99);
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isEmpty();
     }
@@ -32,7 +32,7 @@ public class BookValidationTests {
     @Test
     @DisplayName("ISBN이 정의되었지만 유효하지 않은 경우 밸리데이션 실패")
     void whenIsbnDefinedButIncorrectThenValidationFails() {
-        var book = new Book("아아~섹스하고싶다", "큰 소리로 말하지마, 등신아", "author", 9.99);
+        var book = Book.of("아아~섹스하고싶다", "큰 소리로 말하지마, 등신아", "author", 9.99);
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).hasSize(1);
         assertThat(violations.iterator().next().getMessage())
