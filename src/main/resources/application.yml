@@ -32,12 +32,6 @@ spring:
       connection-timeout: 2000 # 풀에서 커넥션을 얻기 위해 기다려야 하는 최대 시간
       maximum-pool-size: 5 # 히카리 CP 가 풀에 최대한으로 유지할 수 있는 커넥션 수
 
-  sql:
-    init:
-      platform: postgres
-      schema-locations: classpath:/schema.sql
-      mode: always
-
 management:
   endpoint:
     health:

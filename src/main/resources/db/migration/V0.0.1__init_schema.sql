@@ -1,5 +1,4 @@
-DROP TABLE IF EXISTS books;
-CREATE TABLE books
+CREATE TABLE if not exists books
 (
     id                 BIGSERIAL PRIMARY KEY NOT NULL,
     author             VARCHAR(255)          NOT NULL,
