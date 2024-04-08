@@ -23,7 +23,7 @@ class CatalogServiceApplicationTests {
     @Test
     @DisplayName("카탈로그에 책을 추가하는데 성공하는 통합테스트")
     void whenPostRequestThenBookCreated() {
-        var expectedBook = Book.of("1234567890", "Test Book", "author", 9.99);
+        var expectedBook = Book.of("1234567890", "Test Book", "author", 9.99,"제이펍");
 
         webTestClient
                 .post()
