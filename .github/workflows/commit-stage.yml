@@ -10,7 +10,6 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-22.04
-    on: push
     permissions:
       contents: read # 현재 깃 저장소를 체크아웃할 수 있는 권한을 부여
       security-events: write # 깃허브에 보안 이벤트를 제출할 수 있는 권한을 부여
@@ -45,7 +44,6 @@ jobs:
 
   package:
     name: Package and Publish
-    on: push
     needs: [ build ]
     if: ${{ github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-22.04
