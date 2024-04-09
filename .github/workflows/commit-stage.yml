@@ -26,7 +26,7 @@ jobs:
       - name: Build , unit tests and integration tests
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew assemble
 
       - name: Code vulnerability scan
         uses: anchore/scan-action@v3
@@ -75,7 +75,7 @@ jobs:
         uses: anchore/scan-action@v3
         id: scan
         with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          image: ghcr.io/cgk95/${{env.IMAGE_NAME}}:${{env.VERSION}}
           fail-build: false
           severity-cutoff: high
           acs-report-enable: true
