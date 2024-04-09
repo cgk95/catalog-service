@@ -63,14 +63,15 @@ tasks.named('bootRun') {
 }
 
 bootBuildImage {
-    imageName = "${project.name}:${project.version}"
-    environment = ["BP_JVM_VERSION": "17.*"]
+    builder = "docker.io/paketobuildpacks/builder-jammy-base"
+    imageName = "${project.name}"
+    environment = ["BP_JVM_VERSION": "17"]
 
     docker {
-        publishRegistry{
+        publishRegistry {
             username = project.findProperty("registryUsername")
             password = project.findProperty("registryToken")
-            url = project.findProject("registryUrl")
+            url = project.findProperty("registryUrl")
         }
     }
 }
