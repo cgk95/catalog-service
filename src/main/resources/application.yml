@@ -1,0 +1,46 @@
+server:
+  port: 9091
+  tomcat:
+    connection-timeout: 2s
+    keep-alive-timeout: 15s
+    threads:
+      max: 50
+      min-spare: 5
+
+spring:
+  application:
+    name: catalog-service
+  config:
+    import: "optional:configserver:" # 가능한 경우 config server 에서 설정을 가져옴
+  cloud:
+    config:
+      uri: http://localhost:8888 # 설정 서버 주소
+      request-connect-timeout: 50000 # 설정 서버에 연결하는 시간
+      request-read-timeout: 5000 # 설정 서버로부터 응답을 기다리는 시간
+      fail-fast: true # 설정 서버에 연결할 수 없을 경우 애플리케이션 시작 실패, 재시도는 이 속성이 true 로 설정된 경우에만 활성화된다.
+      retry:
+        max-attempts: 5
+        initial-interval: 10000 # 최초 재시도 지연 시간
+        max-interval: 20000 # 최대 재시도 지연 시간
+        multiplier: 1.1 # 재시도 지연 시간 승수
+  datasource:
+    username: user
+    password: password
+    url: jdbc:postgresql://localhost:5441/polardb_catalog
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 2000 # 풀에서 커넥션을 얻기 위해 기다려야 하는 최대 시간
+      maximum-pool-size: 5 # 히카리 CP 가 풀에 최대한으로 유지할 수 있는 커넥션 수
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: refresh
+
+polar:
+  greetings: "안녕하시유~ '로컬' 올리버 쌤 입니다!!"

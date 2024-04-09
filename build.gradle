@@ -1,37 +1,78 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.3'
-	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+}
+
+ext {
+    springCloudVersion = "2021.0.8"
+    testcontainersVersion = "1.17.3"
 }
 
 group = 'com.polarbookshop'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
 
-java {
-	sourceCompatibility = '17'
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
+description = 'Provides functionality for managing the books in the catalog.'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+}
+
+configurations { // 프로젝트를 빌드할 때 그래이들이 설정 프로세서를 사용하도록 설정한다.
+    complieOnly { // 프로젝트를 빌드할 때 새로운 속성에 대한 메타데이터가 자동으로 생섣되고 META-INF/spring-configuration-metadata.json 파일에 저장된다.
+        extendsFrom annotationProcessor
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.flywaydb:flyway-core'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.testcontainers:postgresql' // postgresql 데이터베이스에 대한 컨테이너 관리 기능 제공
+    testImplementation 'org.testcontainers:jdbc'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    runtimeOnly 'org.postgresql:postgresql'
 }
 
-tasks.named('bootBuildImage') {
-	builder = 'paketobuildpacks/builder-jammy-base:latest'
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}" // 테스트 컨테이너 의존성 관리를 위한 BOM 추가
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
+
+tasks.named('bootRun') {
+    systemProperty 'spring.profiles.active', 'testdata'
+}
+
+bootBuildImage {
+    builder = "docker.io/paketobuildpacks/builder-jammy-base"
+    imageName = "${project.name}"
+    environment = ["BP_JVM_VERSION": "17"]
+
+    docker {
+        publishRegistry {
+            username = project.findProperty("registryUsername")
+            password = project.findProperty("registryToken")
+            url = project.findProperty("registryUrl")
+        }
+    }
+}
+
