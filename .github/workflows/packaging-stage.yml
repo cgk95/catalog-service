@@ -1,6 +1,6 @@
 name: Package Stage
 on:
-  push:
+  pull_request:
     branches:
       - develop
 
@@ -43,8 +43,11 @@ jobs:
           fail-build: false
           severity-cutoff: critical
 
+      - name: Print SARIF file
+        run: cat ${{ steps.scan.outputs.sarif }}
+
       - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
