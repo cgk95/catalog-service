@@ -35,15 +35,12 @@ jobs:
           path: "${{ github.workspace }}" # 체크아웃 저장소 패스
           fail-build: false # 취약점이 발견되어도 빌드 실패로 처리하지 않음
           severity-cutoff: high # 취약점 중 critical, high 등급만 리포트
-          acs-report-enable: true # 취약점 리포트 생성
 
       - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2 # 깃허브로 보안 취약성 리포트(SARIF 형식)를 업로드
+        uses: github/codeql-action/upload-sarif@v3 # 깃허브로 보안 취약성 리포트(SARIF 형식)를 업로드
         if: success() || failure() # 이전단계가 실패하더라도 리포트 전송
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }} # 이전 단계 결과의 리포트를 가져온다
-
-
 
   package:
     name: Package and Publish
@@ -77,11 +74,10 @@ jobs:
         with:
           image: ghcr.io/cgk95/${{env.IMAGE_NAME}}:${{env.VERSION}}
           fail-build: false
-          severity-cutoff: high
-          acs-report-enable: true
+          severity-cutoff: critical
 
       - name: Upload vulnerability report
-        uses: gihub.codeql-action/upload-sarif@v2
+        uses: gihub.codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
