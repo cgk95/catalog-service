@@ -72,9 +72,11 @@ jobs:
         uses: anchore/scan-action@v3
         id: scan
         with:
-          image: ghcr.io/cgk95/${{env.IMAGE_NAME}}:${{env.VERSION}}
+          image:
+            ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:${{env.VERSION}}
           fail-build: false
           severity-cutoff: high
+          acs-report-enable: true
 
       - name: Print SARIF file
         run: cat ${{ steps.scan.outputs.sarif }}
@@ -94,3 +96,4 @@ jobs:
 
       - name: Publish container image
         run: docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}
+
