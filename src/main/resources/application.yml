@@ -15,13 +15,13 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888 # 설정 서버 주소
-      request-connect-timeout: 5000 # 설정 서버에 연결하는 시간
+      request-connect-timeout: 50000 # 설정 서버에 연결하는 시간
       request-read-timeout: 5000 # 설정 서버로부터 응답을 기다리는 시간
       fail-fast: true # 설정 서버에 연결할 수 없을 경우 애플리케이션 시작 실패, 재시도는 이 속성이 true 로 설정된 경우에만 활성화된다.
       retry:
         max-attempts: 5
-        initial-interval: 1000 # 최초 재시도 지연 시간
-        max-interval: 2000 # 최대 재시도 지연 시간
+        initial-interval: 10000 # 최초 재시도 지연 시간
+        max-interval: 20000 # 최대 재시도 지연 시간
         multiplier: 1.1 # 재시도 지연 시간 승수
   datasource:
     username: user
