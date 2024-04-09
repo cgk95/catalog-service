@@ -10,6 +10,7 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-22.04
+    on: push
     permissions:
       contents: read # 현재 깃 저장소를 체크아웃할 수 있는 권한을 부여
       security-events: write # 깃허브에 보안 이벤트를 제출할 수 있는 권한을 부여
@@ -34,10 +35,64 @@ jobs:
         with:
           path: "${{ github.workspace }}" # 체크아웃 저장소 패스
           fail-build: false # 취약점이 발견되어도 빌드 실패로 처리하지 않음
-          severity-cutoff: critical # 취약점 중 critical 등급만 리포트
+          severity-cutoff: high # 취약점 중 critical 등급만 리포트
 
       - name: Upload vulnerability report
         uses: github/codeql-action/upload-sarif@v3 # 깃허브로 보안 취약성 리포트(SARIF 형식)를 업로드
         if: success() || failure() # 이전단계가 실패하더라도 리포트 전송
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }} # 이전 단계 결과의 리포트를 가져온다
+
+  package:
+    name: Package and Publish
+    on: push
+    needs: [ build ]
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Build container image
+        run: |
+          chmod +x gradlew
+          ./gradlew bootBuildImage \
+          --imageName ${{ env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}
+
+      - name: OCI image vulnerability scan
+        uses: anchore/scan-action@v3
+        id: scan
+        with:
+          image: ghcr.io/cgk95/${{env.IMAGE_NAME}}:${{env.VERSION}}
+          fail-build: false
+          severity-cutoff: high
+
+      - name: Print SARIF file
+        run: cat ${{ steps.scan.outputs.sarif }}
+
+      - name: Upload vulnerability report
+        uses: github/codeql-action/upload-sarif@v3
+        if: success() || failure()
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+
+      - name: Log into container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{env.REGISTRY}}
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Publish container image
+        run: docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}
