@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  labels:
+    app: catalog-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-service
+  template:
+    metadata:
+      labels:
+        app: catalog-service
+    spec:
+      containers:
+        - name: catalog-service
+          image: catalog-service
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop: # 쿠버네티스가 파드에 SIGTERM 신호를 보내기 전에 30 초간 기다리게 한다.
+              exec:
+                command: [ "sh", "-c", "sleep 30" ]
+          ports:
+            - containerPort: 9001
+          env:
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config-service
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://polar-postgres:5432/polardb_catalog
+            - name: SPRING_PROFILES_ACTIVE
+              value: testdata
