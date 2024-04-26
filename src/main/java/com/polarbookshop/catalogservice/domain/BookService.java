@@ -40,7 +40,9 @@ public class BookService {
                                          book.price(),
                                          book.publisher(),
                                          existingBook.createdDate(),
+                                         existingBook.createdBy(),
                                          existingBook.lastModifiedDate(),
+                                         existingBook.lastModifiedBy(),
                                          existingBook.version()); // 버전은 업데이트가 성공하면 자동으로 증가
                                  return bookRepository.save(bookToUpdate);
                              })
