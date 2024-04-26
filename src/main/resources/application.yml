@@ -35,6 +35,11 @@ spring:
     hikari:
       connection-timeout: 2000 # 풀에서 커넥션을 얻기 위해 기다려야 하는 최대 시간
       maximum-pool-size: 5 # 히카리 CP 가 풀에 최대한으로 유지할 수 있는 커넥션 수
+  security:
+    oauth2:
+      resourceserver:
+        jwt: # OAuth2는 액세스 토큰에 대한 데이터 형식을 강제로 규정하지 않기 때문에 어떤 형식을 사용할지 지정하여야 한다.
+          issuer-uri: http://localhost:8080/realms/PolarBookshop
 
 management:
   endpoint:
